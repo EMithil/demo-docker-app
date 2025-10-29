@@ -10,7 +10,7 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git 'https://github.com/EMithil/demo-docker-app.git'
+                git branch: 'main', url: 'https://github.com/EMithil/demo-docker-app.git'
             }
         }
 
@@ -39,3 +39,4 @@ pipeline {
         }
     }
 }
+
