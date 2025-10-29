@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub')
-        IMAGE_NAME = "EMithil/docker-jenkins-demo"
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub')  // Jenkins credentials ID
+        IMAGE_NAME = "emithil/docker-jenkins-demo"        // Your Docker Hub repo
     }
 
     stages {
@@ -16,27 +16,29 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    sh 'docker build -t $IMAGE_NAME:latest .'
-                }
+                bat "docker build -t %IMAGE_NAME%:latest ."
             }
         }
 
         stage('Login to Docker Hub') {
             steps {
-                script {
-                    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                }
+                bat "docker login -u %DOCKERHUB_CREDENTIALS_USR% -p %DOCKERHUB_CREDENTIALS_PSW%"
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                script {
-                    sh 'docker push $IMAGE_NAME:latest'
-                }
+                bat "docker push %IMAGE_NAME%:latest"
             }
         }
     }
-}
 
+    post {
+        success {
+            echo "✅ Docker image built and pushed successfully!"
+        }
+        failure {
+            echo "❌ Build failed — check logs."
+        }
+    }
+}
